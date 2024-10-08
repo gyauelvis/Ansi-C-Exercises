@@ -40,3 +40,7 @@ void display(Stack s){
   }
 }
 
+int top(Stack *s){
+  if(s->top <= 0)return s->arr[s->top];
+  return 0;
+}
