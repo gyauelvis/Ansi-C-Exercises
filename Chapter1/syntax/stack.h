@@ -9,7 +9,7 @@ typedef struct{
 
 Stack init(){
   Stack s;
-  s.top = 0;
+  s.top = -1;
   return s;
 }
 
@@ -23,24 +23,23 @@ bool is_empty(Stack s){
 
 bool push(Stack *s, char val){
   if(is_full(*s))return false;
-  s->arr[s->top] = val;
-  s->top++;
+  s->arr[s->top + 1] = val;
+  (s->top)++;
   return true;
 }
 
 bool pop(Stack *s){
   if(is_empty(*s))return false;
-  s->top--;
+  (s->top)--;
   return true;
 }
 
 void display(Stack s){
-  for(int i = 0; i<s.top; i++){
+  for(int i = 0; i<s.top; i++)
     printf("%c", s.arr[i]);
-  }
 }
 
 int top(Stack *s){
-  if(s->top <= 0)return s->arr[s->top];
-  return 0;
+  if(s->top >= 0)return s->arr[s->top]; 
+  return EOF;
 }
