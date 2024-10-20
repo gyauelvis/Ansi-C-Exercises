@@ -6,7 +6,7 @@ typedef struct{
 }Map;
 
 // constructor emulator for MAP
-Map init(){
+Map mapInit(){
   Map dict;
   for(int i = 0; i < 2; i++){
     for(int k = 0; k < sizeof(dict.map[i])/ sizeof(dict.map[i][i]); k++){
