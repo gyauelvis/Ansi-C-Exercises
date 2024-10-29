@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
 
 #define MAXARGs 64
-#define DELIMS " \t\a\n\r"
+#define DELIMS " \t\a\n\r/"
 
 typedef struct{
   char *name;
@@ -15,7 +18,7 @@ typedef struct{
 char *read_line(void);
 int parseline(char *, Command *);
 void free_command(Command *);
-
+int execute_command(Command *);
 int main(int argc, char **argv){
 
   bool status = true;
@@ -23,15 +26,10 @@ int main(int argc, char **argv){
   Command cmd;
 
   while(status){
-    printf("x > ");
+    printf("\nx > ");
     line = read_line();
     if(parseline(line, &cmd)){
-      if(cmd.name == "exit" == 0)
-        status = false;
-      printf("cmd name: %s \n", cmd.name);
-      for(int i = 1; i<cmd.arg_count; i++){
-        printf("arg%d: %s", i, cmd.args[i]);
-      }
+      execute_command(&cmd);  
       free_command(&cmd); 
     } 
   }
@@ -90,3 +88,23 @@ void free_command(Command *cmd){
   free(cmd->args);
 }
 
+int execute_command(Command *cmd){
+  pid_t pid;
+  if(strcmp(cmd->name, "exit") == 0)
+    return 0;
+  pid = fork();
+  if(pid == -1){
+    printf("fork failed");
+    exit(1);
+  }
+  if(pid == 0){
+    execvp(cmd->name, cmd->args);
+  }
+
+  int status;
+  do{
+    waitpid(pid, &status, 0);
+  }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+  
+  return 1;
+}
